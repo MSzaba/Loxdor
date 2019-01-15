@@ -1,2 +1,2 @@
-# Loxdor
-Repository fro Loxdor database project
+# PurplePuli
+Repository fro PurplePuli database project
