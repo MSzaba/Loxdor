@@ -6,6 +6,7 @@ public abstract class PPClientCommand {
 	
 	protected String name;
 	protected Map<String, Object> context;
+	protected String parameters;
 	
 	
 	
@@ -21,6 +22,11 @@ public abstract class PPClientCommand {
 			return true;
 		}
 		return false;
+	}
+
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
+		
 	}
 
 }

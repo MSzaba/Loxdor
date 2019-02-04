@@ -7,6 +7,9 @@ import java.util.StringTokenizer;
 
 import com.purplepuli.PPMain;
 import com.purplepuli.client.commands.PPClientCommandExit;
+import com.purplepuli.client.commands.PPClientCommandJavaVersion;
+import com.purplepuli.client.commands.PPClientCommandStart;
+import com.purplepuli.client.commands.PPClientCommandStop;
 import com.purplepuli.client.commands.PPClinetCommandUnknown;
 
 public class PPClient {
@@ -20,13 +23,14 @@ public class PPClient {
 		
 		try(Scanner keyboard = new Scanner(System.in)) {
 		
-			String command = keyboard.nextLine();
+			String command;
 			
 			Map<String, Object> context = new HashMap<>();
 			context.put(CONTEXT_EXIT, false);
 			Map<String, PPClientCommand> commandList = fillCommandList(context);
 			
 			while (!(boolean)context.get(CONTEXT_EXIT)) {
+				command = keyboard.nextLine();
 				PPClientCommand cc = processCommand(command, commandList );
 				cc.execute();
 				try {
@@ -34,16 +38,21 @@ public class PPClient {
 				} catch (InterruptedException e) {
 					// There is no need to handle this
 				}
-				command = keyboard.nextLine();
+				
 			}
+			System.out.println("Exiting in process...");
 		}
-
+		System.out.println("Exiting in process...");
+		System.exit(0);
 	}
 
 	private static Map<String, PPClientCommand> fillCommandList(Map<String, Object> context) {
 		Map<String,PPClientCommand> commands =  new HashMap<>();
 		commands.put(PPClientCommandExit.EXIT, new PPClientCommandExit(context));
 		commands.put(PPClinetCommandUnknown.UNKNOWN, new PPClinetCommandUnknown(context));
+		commands.put(PPClientCommandStart.START, new PPClientCommandStart(context));
+		commands.put(PPClientCommandStop.STOP, new PPClientCommandStop(context));
+		commands.put(PPClientCommandJavaVersion.JAVA_VERSION, new PPClientCommandJavaVersion(context));
 		return commands;
 	}
 
@@ -56,6 +65,9 @@ public class PPClient {
 		
 		//using Lambda expression, streaming and filtering
 		PPClientCommand result = commandList.values().stream().filter(c -> c.checkName(toCheck)).findAny().orElse(commandList.get(PPClinetCommandUnknown.UNKNOWN));
+		if (st.hasMoreTokens()) {
+			result.setParameters(command.substring(toCheck.length() + 1, command.length()));	
+		}
 		
 		
 		
