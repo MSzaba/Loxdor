@@ -28,5 +28,7 @@ public abstract class PPClientCommand {
 		this.parameters = parameters;
 		
 	}
+	
+	abstract public void printHelp();
 
 }

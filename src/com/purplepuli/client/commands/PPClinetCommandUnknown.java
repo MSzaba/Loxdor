@@ -19,4 +19,10 @@ public class PPClinetCommandUnknown extends PPClientCommand {
 
 	}
 
+	@Override
+	public void printHelp() {
+		System.out.println("Unable to print help for an unknown command");
+		
+	}
+
 }

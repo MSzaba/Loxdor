@@ -19,4 +19,11 @@ public class PPClientCommandStop extends PPClientCommand {
 
 	}
 
+	@Override
+	public void printHelp() {
+		System.out.println("Stops a Purple Puli instance");
+		System.out.println("Usage: stop <instance name>");
+		
+	}
+
 }

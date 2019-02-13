@@ -40,6 +40,13 @@ public class PPClientCommandJavaVersion extends PPClientCommand {
 		}
 
 	}
+
+	@Override
+	public void printHelp() {
+		System.out.println("Prints java version used to execute the client");
+		System.out.println("Usage: JavaVersion");
+		
+	}
 	
 	
 

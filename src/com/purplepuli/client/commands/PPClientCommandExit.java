@@ -20,4 +20,10 @@ public class PPClientCommandExit extends PPClientCommand {
 		context.put(PPClient.CONTEXT_EXIT, true);
 	}
 
+	@Override
+	public void printHelp() {
+		System.out.println("Exits from the client. Started instance(s) remain active");
+		System.out.println("Usage: exit");
+	}
+
 }

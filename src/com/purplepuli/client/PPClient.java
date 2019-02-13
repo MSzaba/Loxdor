@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import com.purplepuli.PPMain;
 import com.purplepuli.client.commands.PPClientCommandExit;
+import com.purplepuli.client.commands.PPClientCommandHelp;
 import com.purplepuli.client.commands.PPClientCommandJavaVersion;
 import com.purplepuli.client.commands.PPClientCommandStart;
 import com.purplepuli.client.commands.PPClientCommandStop;
@@ -17,6 +18,7 @@ public class PPClient {
 
 	private static final long CONSOLE_INPUT_DELAY = 500;
 	public static final String CONTEXT_EXIT = "CONTEXT_EXIT";
+	public static final String COMMANDS = "COMMANDS";
 
 	public static void main(String[] args) {
 		System.out.println("Welcome to Purple Puli!\nVersion: " + PPMain.VERSION + "\nPlease enter your commands.");
@@ -28,6 +30,7 @@ public class PPClient {
 			Map<String, Object> context = new HashMap<>();
 			context.put(CONTEXT_EXIT, false);
 			Map<String, PPClientCommand> commandList = fillCommandList(context);
+			context.put(COMMANDS, commandList);
 			
 			while (!(boolean)context.get(CONTEXT_EXIT)) {
 				command = keyboard.nextLine();
@@ -40,7 +43,7 @@ public class PPClient {
 				}
 				
 			}
-			System.out.println("Exiting in process...");
+			
 		}
 		System.out.println("Exiting in process...");
 		System.exit(0);
@@ -53,6 +56,7 @@ public class PPClient {
 		commands.put(PPClientCommandStart.START, new PPClientCommandStart(context));
 		commands.put(PPClientCommandStop.STOP, new PPClientCommandStop(context));
 		commands.put(PPClientCommandJavaVersion.JAVA_VERSION, new PPClientCommandJavaVersion(context));
+		commands.put(PPClientCommandHelp.HELP, new PPClientCommandHelp(context));
 		return commands;
 	}
 
@@ -67,6 +71,8 @@ public class PPClient {
 		PPClientCommand result = commandList.values().stream().filter(c -> c.checkName(toCheck)).findAny().orElse(commandList.get(PPClinetCommandUnknown.UNKNOWN));
 		if (st.hasMoreTokens()) {
 			result.setParameters(command.substring(toCheck.length() + 1, command.length()));	
+		} else {
+			result.setParameters(null);
 		}
 		
 		
