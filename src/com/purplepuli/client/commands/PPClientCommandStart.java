@@ -14,6 +14,7 @@ import com.purplepuli.PPMain;
 import com.purplepuli.Utils;
 import com.purplepuli.client.PPClient;
 import com.purplepuli.client.PPClientCommand;
+import com.purplepuli.logging.LogManager;
 
 public class PPClientCommandStart extends PPClientCommand {
 
@@ -47,7 +48,7 @@ public class PPClientCommandStart extends PPClientCommand {
 				
 				return;
 			}
-			 if (!validateSystemId(parameters)) {
+			 if (!Utils.validateSystemId(parameters)) {
 				 System.out.println("Ambigiuous system id. Minimum length: "+ PPMain.INSTANCE_NAME_LENGTH_MIN +" maximum length: " + PPMain.INSTANCE_NAME_LENGTH_MAX + " . It can contain only numbers and alphabetic characters.");
 				
 				return;
@@ -59,7 +60,7 @@ public class PPClientCommandStart extends PPClientCommand {
 				
 				return;
 			}
-			if(!checkOrCreateFolders(instanceHome)) {
+			if(!Utils.checkOrCreateFolders(instanceHome)) {
 				//prerequisites are not ready for starting the instance
 				System.out.println("uable to start the server");
 				return;
@@ -89,52 +90,20 @@ public class PPClientCommandStart extends PPClientCommand {
 
 	private void redirectInputStream(ProcessBuilder pb, String instanceHome) throws IOException {
 		Path logPath = Paths.get(instanceHome + File.separator + PPMain.LOG_FOLDER);
-		
-		File logfile = new File(logPath.toString() + File.separator + PPMain.STARTUP_LOG + "_" + Utils.getTimestamp(null) + ".log");
-		System.out.println("create logfile: " + logfile.getPath());
+		File logfile = new File(logPath.toString() + File.separator + LogManager.STARTUP_LOG + "_" + Utils.getTimestamp(null) + ".err");
 		logfile.createNewFile();
-		PrintStream o = new PrintStream(logfile);
-		pb.redirectError(logfile);
-		pb.redirectOutput(logfile);
+		try(PrintStream o = new PrintStream(logfile)) {
+			System.out.println("create logfile: " + logfile.getPath());
+			
+			pb.redirectError(logfile);
+			//pb.redirectOutput(logfile);
+		}
 		
 	}
 
-	private boolean checkOrCreateFolders(String instanceHome) {
-		Path instanceHomePath = Paths.get(instanceHome);
-		if (Files.notExists(instanceHomePath)) {
-			//create the root directory of the instance, if it's missing
-			try {
-				Files.createDirectory(instanceHomePath);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		Path logPath = Paths.get(instanceHome + File.separator + PPMain.LOG_FOLDER);
-		if (Files.notExists(logPath)) {
-			//create the root directory of the instance, if it's missing
-			try {
-				Files.createDirectory(logPath);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return true;
-		
-	}
+	
 
-	private boolean validateSystemId(String systemId) {
-		if (systemId == null || systemId.length() < PPMain.INSTANCE_NAME_LENGTH_MIN || systemId.length() > PPMain.INSTANCE_NAME_LENGTH_MAX) {
-			//the id is toos hort or too long
-			return false;
-		}
-		if (!systemId.matches("^(.*[a-zA-Z0-9])$")) {
-			//the id contains special characters
-			return false;
-		}
-		return true;
-	}
+	
 
 	@Override
 	public void printHelp() {
